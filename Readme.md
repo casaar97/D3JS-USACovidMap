@@ -17,6 +17,26 @@ We have to face two challenges here:
 
 We will compare the situation of COVID cases in the different states of USA. In addition, we wll also show the sates in different colors. The darker the color, the greater is the number of cases/deaths. In order to do this, we will compare the total accumulated cases/deaths of each state, taking as a reference the state with most cases/deaths.
 
+# Data
+
+- Longitude and latitude of each state: https://www.latlong.net/category/states-236-14.html
+- Number of COVID-19 total cases and deaths per state: /*
+Data taken from 
+https://www.eldiario.es/sociedad/mapa-datos-coronavirus-espana-comunidades-autonomas-abril-9_1_1039633.html
+"casos notificados en el dia"
+14/04/2021
+*/
+
+# Try the project
+
+If you want to try the project, you just have to type the following into the terminal:
+
+```bash
+npm start
+```
+
+- Note that the steps below must be completed or the repository must be cloned before.
+
 # Steps
 
 The first thing you have to do is to create a project folder containing the following files and directories:
@@ -82,8 +102,6 @@ Once we have everything we needed installed, let´s create the required files in
 ### src/states.ts:
 
 ```typescript
-//source: https://www.latlong.net/category/states-236-14.html
-
 export const latLongStates = [
   {
     name: "Wisconsin",
@@ -341,13 +359,6 @@ export const latLongStates = [
 ### src/totalCases.ts:
 
 ```typescript
-/*
-Data taken from 
-https://www.eldiario.es/sociedad/mapa-datos-coronavirus-espana-comunidades-autonomas-abril-9_1_1039633.html
-"casos notificados en el dia"
-14/04/2021
-*/
-
 export interface ResultEntry {
     name: string;
     value: number;
@@ -557,15 +568,227 @@ export interface ResultEntry {
   ];
 ```
 
+### src/totalCases.ts:
+
+```typescript
+export interface ResultEntry {
+    name: string;
+    value: number;
+  }
+
+  export const deaths: ResultEntry[] = [
+    {
+      name: "Wisconsin",
+      value: 6710
+    },
+    {
+      name: "West Virginia",
+      value: 2785
+    },
+    {
+      name: "Vermont",
+      value: 242
+    },
+    {
+      name: "Texas",
+      value: 49837
+    },
+    {
+      name: "South Dakota",
+      value: 1953
+    },
+    {
+      name: "Rhode Island",
+      value: 2651
+    },
+    {
+      name: "Oregon",
+      value: 2460
+    },
+    {
+      name: "New York",
+      value: 51900
+    },
+    {
+      name: "New Hampshire",
+      value: 1270
+    },
+    {
+      name: "Nebraska",
+      value: 2215
+    },
+    {
+      name: "Kansas",
+      value: 4987
+    },
+    {
+      name: "Mississippi",
+      value: 7153
+    },
+    {
+      name: "Illinois",
+      value: 23976
+    },
+    {
+      name: "Delaware",
+      value: 1602
+    },
+    {
+      name: "Connecticut",
+      value: 8014
+    },
+    {
+      name: "Arkansas",
+      value: 5699
+    },
+    {
+      name: "Indiana",
+      value: 13226
+    },
+    {
+      name: "Missouri",
+      value: 9326
+    },
+    {
+      name: "Florida",
+      value: 34479
+    },
+    {
+      name: "Nevada",
+      value: 5368
+    },
+    {
+      name: "Maine",
+      value: 767
+    },
+    {
+      name: "Michigan",
+      value: 17996
+    },
+    {
+      name: "Georgia",
+      value: 19784
+    },
+    {
+      name: "Hawaii",
+      value: 474
+    },
+    {
+      name: "Alaska",
+      value: 329 
+    },
+    {
+      name: "Tennessee",
+      value: 12081
+    },
+    {
+      name: "Virginia",
+      value: 10625
+    },
+    {
+      name: "New Jersey",
+      value: 25161
+    },
+    {
+      name: "Kentucky",
+      value: 6347
+    },
+    {
+      name: "North Dakota",
+      value: 1479
+    },
+    {
+      name: "Minnesota",
+      value: 7094
+    },
+    {
+      name: "Oklahoma",
+      value: 6697
+    },
+    {
+      name: "Montana",
+      value: 1546
+    },
+    {
+      name: "Washington State",
+      value: 5443
+    },
+    {
+      name: "Utah",
+      value: 2166
+    },
+    {
+      name: "Colorado",
+      value: 6344
+    },
+    {
+      name: "Ohio",
+      value: 1054807
+    },
+    {
+      name: "Alabama",
+      value: 10790
+    },
+    {
+      name: "Iowa",
+      value: 5886
+    },
+    {
+      name: "New Mexico",
+      value: 4007 
+    },
+    {
+      name: "South Carolina",
+      value: 9352
+    },
+    {
+      name: "Pennsylvania",
+      value: 25800
+    },
+    {
+      name: "Arizona",
+      value: 17153
+    },
+    {
+      name: "Maryland",
+      value: 8574
+    },
+    {
+      name: "Massachusetts",
+      value: 17481
+    },
+    {
+      name: "California",
+      value: 61038
+    },
+    {
+      name: "Idaho",
+      value: 2202
+    },
+    {
+      name: "Wyoming",
+      value: 703
+    },
+    {
+      name: "North Carolina",
+      value: 12418
+    },
+    {
+      name: "Louisiana",
+      value: 10293
+    }
+  ];
+```
+
 ### src/map.css:
 
 We will create two classes:
 
-- country: Class for the country color and community lines.
+- state: Class for the state color and state lines.
 - affected-marker: Class for the orange circles.
 
 ```typescript
-.country {
+.state {
   stroke-width: 1;
   stroke: #c3d3db;
   fill: #008c86;
@@ -637,7 +860,7 @@ svg
 
 At this point, the map has been created. Now we will create some functions in order to make everything work as we desire:
 
-### Get the number of cases of the most affected community:
+### Get the number of cases of the most affected state:
 
 ```typescript
 const calculateMaxAffected = (dataset: ResultEntry[]) => {
@@ -648,7 +871,7 @@ const calculateMaxAffected = (dataset: ResultEntry[]) => {
 };
 ```
 
-### Create a radius scale for the radius of each community circunference depending on the number of cases of the most affected community:
+### Create a radius scale for the radius of each state circunference depending on the number of cases of the most affected state:
 
 ```typescript
 const calculateAffectedRadiusScale = (maxAffected: number) => {
@@ -673,7 +896,7 @@ const calculateRadiusBasedOnAffectedCases = (
 };
 ```
 
-### Create a color scale in order to assign a color for each community depending on it's COVID-19 number of cases:
+### Create a color scale in order to assign a color for each state depending on it's COVID-19 number of cases:
 
 ```typescript
 const getScaledColor = (dataset: ResultEntry[]) => {
@@ -695,10 +918,10 @@ const getScaledColor = (dataset: ResultEntry[]) => {
 };
 ```
 
-### Assing a color to each community depending on it's COVID-19 number of cases:
+### Assing a color to each state depending on it's COVID-19 number of cases:
 
 ```typescript
-const assignColorToCommunity = (comunidad: string, dataset: ResultEntry[]) => {
+const assignColorToState = (comunidad: string, dataset: ResultEntry[]) => {
   const entry = dataset.find((item) => item.name === comunidad);
 
   const color = getScaledColor(dataset);
@@ -709,7 +932,7 @@ const assignColorToCommunity = (comunidad: string, dataset: ResultEntry[]) => {
 
 ### Update chart when buttons are clicked
 
-We now that we have to pass d.properties.NAME_1 as a parameter for assignColorToCommunity function because when we inspect spain.json, we can see that the property NAME_1 refers to the community name.
+We now that we have to pass d.properties.NAME_1 as a parameter for assignColorToState function because when we inspect spain.json, we can see that the property NAME_1 refers to the state name.
 
 ```typescript
 const updateChart = (dataset: ResultEntry[]) => {
@@ -722,7 +945,7 @@ const updateChart = (dataset: ResultEntry[]) => {
     .transition()
     .duration(800)
     .style("fill", function (d: any) {
-      return assignColorToCommunity(d.properties.name, dataset);
+      return assignColorToState(d.properties.name, dataset);
     });
 
   svg
@@ -766,7 +989,7 @@ svg
   // data loaded from json file
   .attr("d", geoPath as any)
   .style("fill", function (d: any) {
-    return assignColorToCommunity(d.properties.name, cases);
+    return assignColorToState(d.properties.name, cases);
   });
 
 svg
