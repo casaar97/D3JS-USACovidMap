@@ -2,8 +2,8 @@ import * as d3 from "d3";
 import * as topojson from "topojson-client";
 const usajson = require("./us-albers.json");
 const d3Composite = require("d3-composite-projections");
-import { latLongStates} from "./states";
-import { cases, ResultEntry} from "./totalCases";
+import { latLongStates } from "./states";
+import { cases, ResultEntry } from "./totalCases";
 import { deaths } from "./totalDeaths";
 
 const width = 1024;
@@ -29,7 +29,7 @@ svg
   .data(geojson["features"])
   .enter()
   .append("path")
-  .attr("class", "country")
+  .attr("class", "state")
   // data loaded from json file
   .attr("d", geoPath as any);
 
@@ -99,7 +99,7 @@ const updateChart = (dataset: ResultEntry[]) => {
   svg
     .selectAll("path")
     .data(geojson["features"])
-    .attr("class", "country")
+    .attr("class", "state")
     // data loaded from json file
     .attr("d", geoPath as any)
     .transition()
@@ -124,7 +124,7 @@ svg
   .data(geojson["features"])
   .enter()
   .append("path")
-  .attr("class", "country")
+  .attr("class", "state")
   // data loaded from json file
   .attr("d", geoPath as any)
   .style("fill", function (d: any) {

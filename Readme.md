@@ -1,17 +1,23 @@
-# Map of COVID cases in Spain (version 2.0)
+# Map of COVID cases in USA
 
 ![animated map](./content/animatedMap.gif "Animated Map")
 
-This time, we will add a new feature to the version 1.0 of the Map: https://github.com/casaar97/D3JS-SpainCovidMap-V1
+This time, we will reuse the code from: https://github.com/casaar97/D3JS-SpainCovidMap-V2
 
 We have to face two challenges here:
 
-- Set a color scale for the number of cases.
-- Set a color for each community depending of it's number of cases using the color scale.
+- Change the map from Spain to USA.
+- Get data about COVID-19 total cases in each of the USA state.
+- Get data about COVID-19 total deaths in each of the USA state.
+- Get data about each state location.
+- Set a color scale for the number of cases and deaths.
+- Set a color for each state depending of it's number of cases and deaths using the color scale.
+
+# Objective
+
+We will compare the situation of COVID cases in the different states of USA. In addition, we wll also show the sates in different colors. The darker the color, the greater is the number of cases/deaths. In order to do this, we will compare the total accumulated cases/deaths of each state, taking as a reference the state with most cases/deaths.
 
 # Steps
-
-Although the version 1.0 of the map is very similar, I will explain everything from the scratch just to make sure that you understand everything.
 
 The first thing you have to do is to create a project folder containing the following files and directories:
 
@@ -50,8 +56,9 @@ npm install @types/node --save-dev
 Once we have everything we needed installed, let´s create the required files in the src/ directory:
 
 - src/index.ts: Business logic.
-- src/communities.ts: Contains information about the latitude and longitude of each community of Spain.
-- src/stats.ts: Contains information about COVID-19 cases per community.
+- src/states.ts: Contains information about the latitude and longitude of each state of USA.
+- src/totalCases.ts: Contains information about COVID-19 cases per state.
+- src/totalDeaths.ts: Contains information about COVID-19 deaths per state.
 - src/index.html: HTML code of the project.
 - src/map.css: CSS code of the project.
 
@@ -61,207 +68,279 @@ Once we have everything we needed installed, let´s create the required files in
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="./map.css" />
-    <link rel="stylesheet" type="text/css" href="./base.css" />
   </head>
   <body>
     <div>
-      <button id="initial">Show initial stats</button>
-      <button id="final">Show final stats</button>
+      <button id="cases">Total Cases</button>
+      <button id="deaths">Total Deaths</button>
     </div>
     <script src="./index.ts"></script>
   </body>
 </html>
 ```
 
-### src/communities.ts:
+### src/states.ts:
 
 ```typescript
-export const latLongCommunities = [
+//source: https://www.latlong.net/category/states-236-14.html
+
+export const latLongStates = [
   {
-    name: "Madrid",
-    long: -3.70256,
-    lat: 40.4165,
+    name: "Wisconsin",
+    long: -89.5,
+    lat: 44.5,
   },
   {
-    name: "Andalucía",
-    long: -4.5,
-    lat: 37.6,
+    name: "West Virginia",
+    long: -80.5,
+    lat: 39.0,
   },
   {
-    name: "Valencia",
-    long: -0.37739,
-    lat: 39.45975,
+    name: "Vermont",
+    long: -72.699997,
+    lat: 44.0,
   },
   {
-    name: "Murcia",
-    long: -1.13004,
-    lat: 37.98704,
+    name: "Texas",
+    long: -100.0,
+    lat: 31.0,
   },
   {
-    name: "Extremadura",
-    long: -6.16667,
-    lat: 39.16667,
+    name: "South Dakota",
+    long: -100.0,
+    lat: 44.5,
   },
   {
-    name: "Cataluña",
-    long: 1.86768,
-    lat: 41.82046,
+    name: "Rhode Island",
+    long: -71.5,
+    lat: 41.700001,
   },
   {
-    name: "País Vasco",
-    long: -2.75,
+    name: "Oregon",
+    long: -120.5,
+    lat: 44.0,
+  },
+  {
+    name: "New York",
+    long: -75.0,
     lat: 43.0,
   },
   {
-    name: "Cantabria",
-    long: -4.03333,
-    lat: 43.2,
+    name: "New Hampshire",
+    long: -71.5,
+    lat: 44.0,
   },
   {
-    name: "Asturias",
-    long: -5.86112,
-    lat: 43.36662,
+    name: "Nebraska",
+    long: -100.0,
+    lat: 41.5,
   },
   {
-    name: "Galicia",
-    long: -7.86621,
-    lat: 42.75508,
+    name: "Kansas",
+    long: -98.0,
+    lat: 38.5,
   },
   {
-    name: "Aragón",
-    long: -1.0,
-    lat: 41.0,
+    name: "Mississippi",
+    long: -90.0,
+    lat: 33.0,
   },
   {
-    name: "Castilla y León",
-    long: -4.45,
-    lat: 41.383333,
+    name: "Illinois",
+    long: -89.0,
+    lat: 40.0,
   },
   {
-    name: "Castilla La Mancha",
-    long: -3.000033,
-    lat: 39.500011,
+    name: "Delaware",
+    long: -75.5,
+    lat: 39.0,
   },
   {
-    name: "Islas Canarias",
-    long: -15.5,
-    lat: 28.0,
+    name: "Connecticut",
+    long: -72.699997,
+    lat: 41.599998,
   },
   {
-    name: "Islas Baleares",
-    long: 2.52136,
-    lat: 39.18969,
+    name: "Arkansas",
+    long: -92.199997,
+    lat: 34.799999,
   },
   {
-    name: "Navarra",
-    long: -1.65,
-    lat: 42.816666,
+    name: "Indiana",
+    long: -86.126976,
+    lat: 40.273502,
   },
   {
-    name: "La Rioja",
-    long: -2.445556,
-    lat: 42.465,
+    name: "Missouri",
+    long: -92.603760,
+    lat: 38.573936,
   },
   {
-    name: "Ceuta",
-    long: -5.3162,
-    lat: 35.8883,
+    name: "Florida",
+    long: -81.760254,
+    lat: 27.994402,
   },
   {
-    name: "Melilla",
-    long: -2.93848,
-    lat: 35.2919,
+    name: "Nevada",
+    long: -117.224121,
+    lat: 39.876019,
   },
+  {
+    name: "Maine",
+    long: -68.972168,
+    lat: 45.367584,
+  },
+  {
+    name: "Michigan",
+    long: -84.506836,
+    lat: 44.182205,
+  },
+  {
+    name: "Georgia",
+    long: -83.441162,
+    lat: 33.247875,
+  },
+  {
+    name: "Hawaii",
+    long: -155.844437,
+    lat: 19.741755,
+  },
+  {
+    name: "Alaska",
+    long: -153.369141,
+    lat: 66.160507,
+  },
+  {
+    name: "Tennessee",
+    long: -86.660156,
+    lat: 35.860119,
+  },
+  {
+    name: "Virginia",
+    long: -78.024902,
+    lat: 37.926868,
+  },
+  {
+    name: "New Jersey",
+    long: -74.871826,
+    lat: 39.833851,
+  },
+  {
+    name: "Kentucky",
+    long: -84.270020,
+    lat: 37.839333,
+  },
+  {
+    name: "North Dakota",
+    long: -100.437012,
+    lat: 47.650589,
+  },
+  {
+    name: "Minnesota",
+    long: -94.636230,
+    lat: 46.392410,
+  },
+  {
+    name: "Oklahoma",
+    long: -96.921387,
+    lat: 36.084621,
+  },
+  {
+    name: "Montana",
+    long: -109.533691,
+    lat: 46.965260,
+  },
+  {
+    name: "Washington State",
+    long: -120.740135,
+    lat: 47.751076,
+  },
+  {
+    name: "Utah",
+    long: -111.950684,
+    lat: 39.419220,
+  },
+  {
+    name: "Colorado",
+    long: -105.358887,
+    lat: 39.113014,
+  },
+  {
+    name: "Ohio",
+    long: -82.996216,
+    lat: 40.367474,
+  },
+  {
+    name: "Alabama",
+    long: -86.902298,
+    lat: 32.318230,
+  },
+  {
+    name: "Iowa",
+    long: -93.581543,
+    lat: 42.032974,
+  },
+  {
+    name: "New Mexico",
+    long: -106.018066,
+    lat: 34.307144,
+  },
+  {
+    name: "South Carolina",
+    long: -81.163727,
+    lat: 33.836082,
+  },
+  {
+    name: "Pennsylvania",
+    long: -77.194527,
+    lat: 41.203323,
+  },
+  {
+    name: "Arizona",
+    long: -111.093735,
+    lat: 34.048927,
+  },
+  {
+    name: "Maryland",
+    long: -76.641273,
+    lat: 39.045753,
+  },
+  {
+    name: "Massachusetts",
+    long: -71.382439,
+    lat: 42.407211,
+  },
+  {
+    name: "California",
+    long: -119.417931,
+    lat: 36.778259,
+  },
+  {
+    name: "Idaho",
+    long: -114.742043,
+    lat:	44.068203,
+  },
+  {
+    name: "Wyoming",
+    long: -107.290283,
+    lat: 43.075970,
+  },
+  {
+    name: "North Carolina",
+    long: -80.793457,
+    lat: 35.782169,
+  },
+  {
+    name: "Louisiana",
+    long: -92.329102,
+    lat:	30.391830,
+  }
 ];
 ```
 
-### src/stats.ts:
+### src/totalCases.ts:
 
 ```typescript
-export interface ResultEntry {
-  name: string;
-  value: number;
-}
-
-export const initialStats: ResultEntry[] = [
-  {
-    name: "Madrid",
-    value: 174,
-  },
-  {
-    name: "La Rioja",
-    value: 39,
-  },
-  {
-    name: "Andalucía",
-    value: 34,
-  },
-  {
-    name: "Cataluña",
-    value: 24,
-  },
-  {
-    name: "Valencia",
-    value: 30,
-  },
-  {
-    name: "Murcia",
-    value: 0,
-  },
-  {
-    name: "Extremadura",
-    value: 6,
-  },
-  {
-    name: "Castilla La Mancha",
-    value: 16,
-  },
-  {
-    name: "País Vasco",
-    value: 45,
-  },
-  {
-    name: "Cantabria",
-    value: 10,
-  },
-  {
-    name: "Asturias",
-    value: 5,
-  },
-  {
-    name: "Galicia",
-    value: 3,
-  },
-  {
-    name: "Aragón",
-    value: 11,
-  },
-  {
-    name: "Castilla y León",
-    value: 19,
-  },
-  {
-    name: "Islas Canarias",
-    value: 18,
-  },
-  {
-    name: "Islas Baleares",
-    value: 6,
-  },
-  {
-    name: "Navarra",
-    value: 20,
-  },
-  {
-    name: "Ceuta",
-    value: 5,
-  },
-  {
-    name: "Melilla",
-    value: 25,
-  },
-];
-
 /*
 Data taken from 
 https://www.eldiario.es/sociedad/mapa-datos-coronavirus-espana-comunidades-autonomas-abril-9_1_1039633.html
@@ -269,84 +348,213 @@ https://www.eldiario.es/sociedad/mapa-datos-coronavirus-espana-comunidades-auton
 14/04/2021
 */
 
-export const finalStats: ResultEntry[] = [
-  {
-    name: "Madrid",
-    value: 646763,
-  },
-  {
-    name: "La Rioja",
-    value: 28525,
-  },
-  {
-    name: "Andalucía",
-    value: 523865,
-  },
-  {
-    name: "Cataluña",
-    value: 553393,
-  },
-  {
-    name: "Valencia",
-    value: 387611,
-  },
-  {
-    name: "Murcia",
-    value: 109529,
-  },
-  {
-    name: "Extremadura",
-    value: 72442,
-  },
-  {
-    name: "Castilla La Mancha",
-    value: 179346,
-  },
-  {
-    name: "País Vasco",
-    value: 171232,
-  },
-  {
-    name: "Cantabria",
-    value: 26990,
-  },
-  {
-    name: "Asturias",
-    value: 48771,
-  },
-  {
-    name: "Galicia",
-    value: 118559,
-  },
-  {
-    name: "Aragón",
-    value: 113630,
-  },
-  {
-    name: "Castilla y León",
-    value: 217129,
-  },
-  {
-    name: "Islas Canarias",
-    value: 49630,
-  },
-  {
-    name: "Islas Baleares",
-    value: 58380,
-  },
-  {
-    name: "Navarra",
-    value: 56959,
-  },
-  {
-    name: "Ceuta",
-    value: 5515,
-  },
-  {
-    name: "Melilla",
-    value: 8279,
-  },
-];
+export interface ResultEntry {
+    name: string;
+    value: number;
+  }
+  
+  export const cases: ResultEntry[] = [
+    {
+      name: "Wisconsin",
+      value: 590831
+    },
+    {
+      name: "West Virginia",
+      value: 149147
+    },
+    {
+      name: "Vermont",
+      value: 22112
+    },
+    {
+      name: "Texas",
+      value: 2859452
+    },
+    {
+      name: "South Dakota",
+      value: 121189 
+    },
+    {
+      name: "Rhode Island",
+      value: 144966
+    },
+    {
+      name: "Oregon",
+      value: 175592
+    },
+    {
+      name: "New York",
+      value: 2049527
+    },
+    {
+      name: "New Hampshire",
+      value: 91783
+    },
+    {
+      name: "Nebraska",
+      value: 216613
+    },
+    {
+      name: "Kansas",
+      value: 307729
+    },
+    {
+      name: "Mississippi",
+      value: 309223
+    },
+    {
+      name: "Illinois",
+      value: 1304200
+    },
+    {
+      name: "Delaware",
+      value: 101547
+    },
+    {
+      name: "Connecticut",
+      value: 331401
+    },
+    {
+      name: "Arkansas",
+      value: 333511
+    },
+    {
+      name: "Indiana",
+      value: 708779
+    },
+    {
+      name: "Missouri",
+      value: 577317
+    },
+    {
+      name: "Florida",
+      value: 2173138
+    },
+    {
+      name: "Nevada",
+      value: 310933
+    },
+    {
+      name: "Maine",
+      value: 57965
+    },
+    {
+      name: "Michigan",
+      value: 882871
+    },
+    {
+      name: "Georgia",
+      value: 1085161
+    },
+    {
+      name: "Hawaii",
+      value: 31446
+    },
+    {
+      name: "Alaska",
+      value: 63675
+    },
+    {
+      name: "Tennessee",
+      value: 835842
+    },
+    {
+      name: "Virginia",
+      value: 648347
+    },
+    {
+      name: "New Jersey",
+      value: 981036
+    },
+    {
+      name: "Kentucky",
+      value: 437543
+    },
+    {
+      name: "North Dakota",
+      value: 105805
+    },
+    {
+      name: "Minnesota",
+      value: 557665
+    },
+    {
+      name: "Oklahoma",
+      value: 445650
+    },
+    {
+      name: "Montana",
+      value: 107202
+    },
+    {
+      name: "Washington State",
+      value: 389143
+    },
+    {
+      name: "Utah",
+      value: 392957
+    },
+    {
+      name: "Colorado",
+      value: 491066
+    },
+    {
+      name: "Ohio",
+      value: 18991
+    },
+    {
+      name: "Alabama",
+      value: 522512
+    },
+    {
+      name: "Iowa",
+      value: 389542
+    },
+    {
+      name: "New Mexico",
+      value: 195478
+    },
+    {
+      name: "South Carolina",
+      value: 570032 
+    },
+    {
+      name: "Pennsylvania",
+      value: 1114473
+    },
+    {
+      name: "Arizona",
+      value: 854453
+    },
+    {
+      name: "Maryland",
+      value: 436659
+    },
+    {
+      name: "Massachusetts",
+      value: 673974
+    },
+    {
+      name: "California",
+      value: 3721390
+    },
+    {
+      name: "Idaho",
+      value: 185227
+    },
+    {
+      name: "Wyoming",
+      value: 57378 
+    },
+    {
+      name: "North Carolina",
+      value: 949366
+    },
+    {
+      name: "Louisiana",
+      value: 453351 
+    }
+  ];
 ```
 
 ### src/map.css:
@@ -371,9 +579,9 @@ We will create two classes:
 }
 ```
 
-We will use Spain topojson info: https://github.com/deldersveld/topojson/blob/master/countries/spain/spain-comunidad-with-canary-islands.json
+We will use USA topojson info: https://github.com/deldersveld/topojson/blob/master/countries/united-states/us-albers.json
 
-Let's copy it under the following route _./src/spain.json_
+Let's copy it under the following route _./src/us-albers.json_
 
 - Now we will import all the required dependencies into _index.ts_:
 
@@ -382,26 +590,29 @@ _./src/index.ts_
 ```diff
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
-const spainjson = require("./spain.json");
+const usajson = require("./us-albers.json");
 const d3Composite = require("d3-composite-projections");
-import { latLongCommunities } from "./communities";
-import { initialStats, finalStats, ResultEntry } from "./stats";
+import { latLongStates } from "./states";
+import { cases, ResultEntry } from "./totalCases";
+import { deaths } from "./totalDeaths";
 ```
 
-- Let's build the Spain map:
+- Let's build the USA map:
 
 _./src/index.ts_
 
 ```typescript
+const width = 1024;
+const height = 800;
+
 const aProjection = d3Composite
-  .geoConicConformalSpain() // Let's make the map bigger to fit in our resolution
-  .scale(3300)
-  // Let's center the map
-  .translate([500, 400]);
+  .geoAlbersUsa()
+  .translate([width / 2, height / 2])
+  .scale(width); // Let's make the map bigger to fit in our resolution
 
 const geoPath = d3.geoPath().projection(aProjection);
-const geojson = topojson.feature(spainjson, spainjson.objects.ESP_adm1);
-);
+const geojson = topojson.feature(usajson, usajson.objects.us);
+
 ```
 
 Now let's create the map:
@@ -410,8 +621,8 @@ Now let's create the map:
 const svg = d3
   .select("body")
   .append("svg")
-  .attr("width", 1024)
-  .attr("height", 800)
+  .attr("width", width)
+  .attr("height", height)
   .attr("style", "background-color: #FBFAF0");
 
 svg
@@ -419,7 +630,7 @@ svg
   .data(geojson["features"])
   .enter()
   .append("path")
-  .attr("class", "country")
+  .attr("class", "state")
   // data loaded from json file
   .attr("d", geoPath as any);
 ```
@@ -502,31 +713,27 @@ We now that we have to pass d.properties.NAME_1 as a parameter for assignColorTo
 
 ```typescript
 const updateChart = (dataset: ResultEntry[]) => {
-  svg.selectAll("path").remove();
-
   svg
     .selectAll("path")
     .data(geojson["features"])
-    .enter()
-    .append("path")
-    .attr("class", "country")
+    .attr("class", "state")
     // data loaded from json file
     .attr("d", geoPath as any)
+    .transition()
+    .duration(800)
     .style("fill", function (d: any) {
-      return assignColorToCommunity(d.properties.NAME_1, dataset);
+      return assignColorToCommunity(d.properties.name, dataset);
     });
-
-  svg.selectAll("circle").remove();
 
   svg
     .selectAll("circle")
-    .data(latLongCommunities)
-    .enter()
-    .append("circle")
+    .data(latLongStates)
     .attr("class", "affected-marker")
-    .attr("r", (d) => calculateRadiusBasedOnAffectedCases(d.name, dataset))
     .attr("cx", (d) => aProjection([d.long, d.lat])[0])
-    .attr("cy", (d) => aProjection([d.long, d.lat])[1]);
+    .attr("cy", (d) => aProjection([d.long, d.lat])[1])
+    .transition()
+    .duration(800)
+    .attr("r", (d) => calculateRadiusBasedOnAffectedCases(d.name, dataset));
 };
 ```
 
@@ -534,14 +741,41 @@ const updateChart = (dataset: ResultEntry[]) => {
 
 ```typescript
 document
-  .getElementById("initial")
-  .addEventListener("click", function handleInitialStats() {
-    updateChart(initialStats);
+  .getElementById("cases")
+  .addEventListener("click", function handleCases() {
+    updateChart(cases);
   });
 
 document
-  .getElementById("final")
-  .addEventListener("click", function handleFinalStats() {
-    updateChart(finalStats);
+  .getElementById("deaths")
+  .addEventListener("click", function handleDeaths() {
+    updateChart(deaths);
   });
+```
+
+
+### Add initial stats to the map by default
+
+```typescript
+svg
+  .selectAll("path")
+  .data(geojson["features"])
+  .enter()
+  .append("path")
+  .attr("class", "state")
+  // data loaded from json file
+  .attr("d", geoPath as any)
+  .style("fill", function (d: any) {
+    return assignColorToCommunity(d.properties.name, cases);
+  });
+
+svg
+  .selectAll("circle")
+  .data(latLongStates)
+  .enter()
+  .append("circle")
+  .attr("class", "affected-marker")
+  .attr("cx", (d) => aProjection([d.long, d.lat])[0])
+  .attr("cy", (d) => aProjection([d.long, d.lat])[1])
+  .attr("r", (d) => calculateRadiusBasedOnAffectedCases(d.name, cases));
 ```
