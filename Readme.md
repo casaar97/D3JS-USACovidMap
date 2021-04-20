@@ -563,7 +563,7 @@ export interface ResultEntry {
   ];
 ```
 
-### src/totalCases.ts:
+### src/totalDeaths.ts:
 
 ```typescript
 export interface ResultEntry {
