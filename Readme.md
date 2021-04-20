@@ -20,12 +20,7 @@ We will compare the situation of COVID cases in the different states of USA. In 
 # Data
 
 - Longitude and latitude of each state: https://www.latlong.net/category/states-236-14.html
-- Number of COVID-19 total cases and deaths per state: /*
-Data taken from 
-https://www.eldiario.es/sociedad/mapa-datos-coronavirus-espana-comunidades-autonomas-abril-9_1_1039633.html
-"casos notificados en el dia"
-14/04/2021
-*/
+- Number of COVID-19 total cases and deaths per state: https://www.worldometers.info/coronavirus/country/us/
 
 # Try the project
 
