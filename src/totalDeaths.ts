@@ -157,7 +157,7 @@ export interface ResultEntry {
     },
     {
       name: "Ohio",
-      value: 1054807
+      value: 18991
     },
     {
       name: "Alabama",
