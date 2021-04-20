@@ -105,7 +105,7 @@ const updateChart = (dataset: ResultEntry[]) => {
     .transition()
     .duration(800)
     .style("fill", function (d: any) {
-      return assignColorToCommunity(d.properties.NAME_1, dataset);
+      return assignColorToCommunity(d.properties.name, dataset);
     });
 
   svg
