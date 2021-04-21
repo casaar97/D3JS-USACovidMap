@@ -4,9 +4,10 @@
 
 This time, we will reuse the code from: https://github.com/casaar97/D3JS-SpainCovidMap-V2
 
-We have to face two challenges here:
+We have to face some challenges here:
 
 - Change the map from Spain to USA.
+- Change the projection to use USA map.
 - Get data about COVID-19 total cases in each of the USA state.
 - Get data about COVID-19 total deaths in each of the USA state.
 - Get data about each state location.
@@ -185,7 +186,7 @@ export const latLongStates = [
   },
   {
     name: "Missouri",
-    long: -92.603760,
+    long: -92.60376,
     lat: 38.573936,
   },
   {
@@ -240,7 +241,7 @@ export const latLongStates = [
   },
   {
     name: "Kentucky",
-    long: -84.270020,
+    long: -84.27002,
     lat: 37.839333,
   },
   {
@@ -250,8 +251,8 @@ export const latLongStates = [
   },
   {
     name: "Minnesota",
-    long: -94.636230,
-    lat: 46.392410,
+    long: -94.63623,
+    lat: 46.39241,
   },
   {
     name: "Oklahoma",
@@ -261,7 +262,7 @@ export const latLongStates = [
   {
     name: "Montana",
     long: -109.533691,
-    lat: 46.965260,
+    lat: 46.96526,
   },
   {
     name: "Washington State",
@@ -271,7 +272,7 @@ export const latLongStates = [
   {
     name: "Utah",
     long: -111.950684,
-    lat: 39.419220,
+    lat: 39.41922,
   },
   {
     name: "Colorado",
@@ -286,7 +287,7 @@ export const latLongStates = [
   {
     name: "Alabama",
     long: -86.902298,
-    lat: 32.318230,
+    lat: 32.31823,
   },
   {
     name: "Iowa",
@@ -331,12 +332,12 @@ export const latLongStates = [
   {
     name: "Idaho",
     long: -114.742043,
-    lat:	44.068203,
+    lat: 44.068203,
   },
   {
     name: "Wyoming",
     long: -107.290283,
-    lat: 43.075970,
+    lat: 43.07597,
   },
   {
     name: "North Carolina",
@@ -346,8 +347,8 @@ export const latLongStates = [
   {
     name: "Louisiana",
     long: -92.329102,
-    lat:	30.391830,
-  }
+    lat: 30.39183,
+  },
 ];
 ```
 
@@ -355,424 +356,424 @@ export const latLongStates = [
 
 ```typescript
 export interface ResultEntry {
-    name: string;
-    value: number;
-  }
-  
-  export const cases: ResultEntry[] = [
-    {
-      name: "Wisconsin",
-      value: 590831
-    },
-    {
-      name: "West Virginia",
-      value: 149147
-    },
-    {
-      name: "Vermont",
-      value: 22112
-    },
-    {
-      name: "Texas",
-      value: 2859452
-    },
-    {
-      name: "South Dakota",
-      value: 121189 
-    },
-    {
-      name: "Rhode Island",
-      value: 144966
-    },
-    {
-      name: "Oregon",
-      value: 175592
-    },
-    {
-      name: "New York",
-      value: 2049527
-    },
-    {
-      name: "New Hampshire",
-      value: 91783
-    },
-    {
-      name: "Nebraska",
-      value: 216613
-    },
-    {
-      name: "Kansas",
-      value: 307729
-    },
-    {
-      name: "Mississippi",
-      value: 309223
-    },
-    {
-      name: "Illinois",
-      value: 1304200
-    },
-    {
-      name: "Delaware",
-      value: 101547
-    },
-    {
-      name: "Connecticut",
-      value: 331401
-    },
-    {
-      name: "Arkansas",
-      value: 333511
-    },
-    {
-      name: "Indiana",
-      value: 708779
-    },
-    {
-      name: "Missouri",
-      value: 577317
-    },
-    {
-      name: "Florida",
-      value: 2173138
-    },
-    {
-      name: "Nevada",
-      value: 310933
-    },
-    {
-      name: "Maine",
-      value: 57965
-    },
-    {
-      name: "Michigan",
-      value: 882871
-    },
-    {
-      name: "Georgia",
-      value: 1085161
-    },
-    {
-      name: "Hawaii",
-      value: 31446
-    },
-    {
-      name: "Alaska",
-      value: 63675
-    },
-    {
-      name: "Tennessee",
-      value: 835842
-    },
-    {
-      name: "Virginia",
-      value: 648347
-    },
-    {
-      name: "New Jersey",
-      value: 981036
-    },
-    {
-      name: "Kentucky",
-      value: 437543
-    },
-    {
-      name: "North Dakota",
-      value: 105805
-    },
-    {
-      name: "Minnesota",
-      value: 557665
-    },
-    {
-      name: "Oklahoma",
-      value: 445650
-    },
-    {
-      name: "Montana",
-      value: 107202
-    },
-    {
-      name: "Washington State",
-      value: 389143
-    },
-    {
-      name: "Utah",
-      value: 392957
-    },
-    {
-      name: "Colorado",
-      value: 491066
-    },
-    {
-      name: "Ohio",
-      value: 18991
-    },
-    {
-      name: "Alabama",
-      value: 522512
-    },
-    {
-      name: "Iowa",
-      value: 389542
-    },
-    {
-      name: "New Mexico",
-      value: 195478
-    },
-    {
-      name: "South Carolina",
-      value: 570032 
-    },
-    {
-      name: "Pennsylvania",
-      value: 1114473
-    },
-    {
-      name: "Arizona",
-      value: 854453
-    },
-    {
-      name: "Maryland",
-      value: 436659
-    },
-    {
-      name: "Massachusetts",
-      value: 673974
-    },
-    {
-      name: "California",
-      value: 3721390
-    },
-    {
-      name: "Idaho",
-      value: 185227
-    },
-    {
-      name: "Wyoming",
-      value: 57378 
-    },
-    {
-      name: "North Carolina",
-      value: 949366
-    },
-    {
-      name: "Louisiana",
-      value: 453351 
-    }
-  ];
+  name: string;
+  value: number;
+}
+
+export const cases: ResultEntry[] = [
+  {
+    name: "Wisconsin",
+    value: 590831,
+  },
+  {
+    name: "West Virginia",
+    value: 149147,
+  },
+  {
+    name: "Vermont",
+    value: 22112,
+  },
+  {
+    name: "Texas",
+    value: 2859452,
+  },
+  {
+    name: "South Dakota",
+    value: 121189,
+  },
+  {
+    name: "Rhode Island",
+    value: 144966,
+  },
+  {
+    name: "Oregon",
+    value: 175592,
+  },
+  {
+    name: "New York",
+    value: 2049527,
+  },
+  {
+    name: "New Hampshire",
+    value: 91783,
+  },
+  {
+    name: "Nebraska",
+    value: 216613,
+  },
+  {
+    name: "Kansas",
+    value: 307729,
+  },
+  {
+    name: "Mississippi",
+    value: 309223,
+  },
+  {
+    name: "Illinois",
+    value: 1304200,
+  },
+  {
+    name: "Delaware",
+    value: 101547,
+  },
+  {
+    name: "Connecticut",
+    value: 331401,
+  },
+  {
+    name: "Arkansas",
+    value: 333511,
+  },
+  {
+    name: "Indiana",
+    value: 708779,
+  },
+  {
+    name: "Missouri",
+    value: 577317,
+  },
+  {
+    name: "Florida",
+    value: 2173138,
+  },
+  {
+    name: "Nevada",
+    value: 310933,
+  },
+  {
+    name: "Maine",
+    value: 57965,
+  },
+  {
+    name: "Michigan",
+    value: 882871,
+  },
+  {
+    name: "Georgia",
+    value: 1085161,
+  },
+  {
+    name: "Hawaii",
+    value: 31446,
+  },
+  {
+    name: "Alaska",
+    value: 63675,
+  },
+  {
+    name: "Tennessee",
+    value: 835842,
+  },
+  {
+    name: "Virginia",
+    value: 648347,
+  },
+  {
+    name: "New Jersey",
+    value: 981036,
+  },
+  {
+    name: "Kentucky",
+    value: 437543,
+  },
+  {
+    name: "North Dakota",
+    value: 105805,
+  },
+  {
+    name: "Minnesota",
+    value: 557665,
+  },
+  {
+    name: "Oklahoma",
+    value: 445650,
+  },
+  {
+    name: "Montana",
+    value: 107202,
+  },
+  {
+    name: "Washington State",
+    value: 389143,
+  },
+  {
+    name: "Utah",
+    value: 392957,
+  },
+  {
+    name: "Colorado",
+    value: 491066,
+  },
+  {
+    name: "Ohio",
+    value: 1054807,
+  },
+  {
+    name: "Alabama",
+    value: 522512,
+  },
+  {
+    name: "Iowa",
+    value: 389542,
+  },
+  {
+    name: "New Mexico",
+    value: 195478,
+  },
+  {
+    name: "South Carolina",
+    value: 570032,
+  },
+  {
+    name: "Pennsylvania",
+    value: 1114473,
+  },
+  {
+    name: "Arizona",
+    value: 854453,
+  },
+  {
+    name: "Maryland",
+    value: 436659,
+  },
+  {
+    name: "Massachusetts",
+    value: 673974,
+  },
+  {
+    name: "California",
+    value: 3721390,
+  },
+  {
+    name: "Idaho",
+    value: 185227,
+  },
+  {
+    name: "Wyoming",
+    value: 57378,
+  },
+  {
+    name: "North Carolina",
+    value: 949366,
+  },
+  {
+    name: "Louisiana",
+    value: 453351,
+  },
+];
 ```
 
 ### src/totalDeaths.ts:
 
 ```typescript
 export interface ResultEntry {
-    name: string;
-    value: number;
-  }
+  name: string;
+  value: number;
+}
 
-  export const deaths: ResultEntry[] = [
-    {
-      name: "Wisconsin",
-      value: 6710
-    },
-    {
-      name: "West Virginia",
-      value: 2785
-    },
-    {
-      name: "Vermont",
-      value: 242
-    },
-    {
-      name: "Texas",
-      value: 49837
-    },
-    {
-      name: "South Dakota",
-      value: 1953
-    },
-    {
-      name: "Rhode Island",
-      value: 2651
-    },
-    {
-      name: "Oregon",
-      value: 2460
-    },
-    {
-      name: "New York",
-      value: 51900
-    },
-    {
-      name: "New Hampshire",
-      value: 1270
-    },
-    {
-      name: "Nebraska",
-      value: 2215
-    },
-    {
-      name: "Kansas",
-      value: 4987
-    },
-    {
-      name: "Mississippi",
-      value: 7153
-    },
-    {
-      name: "Illinois",
-      value: 23976
-    },
-    {
-      name: "Delaware",
-      value: 1602
-    },
-    {
-      name: "Connecticut",
-      value: 8014
-    },
-    {
-      name: "Arkansas",
-      value: 5699
-    },
-    {
-      name: "Indiana",
-      value: 13226
-    },
-    {
-      name: "Missouri",
-      value: 9326
-    },
-    {
-      name: "Florida",
-      value: 34479
-    },
-    {
-      name: "Nevada",
-      value: 5368
-    },
-    {
-      name: "Maine",
-      value: 767
-    },
-    {
-      name: "Michigan",
-      value: 17996
-    },
-    {
-      name: "Georgia",
-      value: 19784
-    },
-    {
-      name: "Hawaii",
-      value: 474
-    },
-    {
-      name: "Alaska",
-      value: 329 
-    },
-    {
-      name: "Tennessee",
-      value: 12081
-    },
-    {
-      name: "Virginia",
-      value: 10625
-    },
-    {
-      name: "New Jersey",
-      value: 25161
-    },
-    {
-      name: "Kentucky",
-      value: 6347
-    },
-    {
-      name: "North Dakota",
-      value: 1479
-    },
-    {
-      name: "Minnesota",
-      value: 7094
-    },
-    {
-      name: "Oklahoma",
-      value: 6697
-    },
-    {
-      name: "Montana",
-      value: 1546
-    },
-    {
-      name: "Washington State",
-      value: 5443
-    },
-    {
-      name: "Utah",
-      value: 2166
-    },
-    {
-      name: "Colorado",
-      value: 6344
-    },
-    {
-      name: "Ohio",
-      value: 1054807
-    },
-    {
-      name: "Alabama",
-      value: 10790
-    },
-    {
-      name: "Iowa",
-      value: 5886
-    },
-    {
-      name: "New Mexico",
-      value: 4007 
-    },
-    {
-      name: "South Carolina",
-      value: 9352
-    },
-    {
-      name: "Pennsylvania",
-      value: 25800
-    },
-    {
-      name: "Arizona",
-      value: 17153
-    },
-    {
-      name: "Maryland",
-      value: 8574
-    },
-    {
-      name: "Massachusetts",
-      value: 17481
-    },
-    {
-      name: "California",
-      value: 61038
-    },
-    {
-      name: "Idaho",
-      value: 2202
-    },
-    {
-      name: "Wyoming",
-      value: 703
-    },
-    {
-      name: "North Carolina",
-      value: 12418
-    },
-    {
-      name: "Louisiana",
-      value: 10293
-    }
-  ];
+export const deaths: ResultEntry[] = [
+  {
+    name: "Wisconsin",
+    value: 6710,
+  },
+  {
+    name: "West Virginia",
+    value: 2785,
+  },
+  {
+    name: "Vermont",
+    value: 242,
+  },
+  {
+    name: "Texas",
+    value: 49837,
+  },
+  {
+    name: "South Dakota",
+    value: 1953,
+  },
+  {
+    name: "Rhode Island",
+    value: 2651,
+  },
+  {
+    name: "Oregon",
+    value: 2460,
+  },
+  {
+    name: "New York",
+    value: 51900,
+  },
+  {
+    name: "New Hampshire",
+    value: 1270,
+  },
+  {
+    name: "Nebraska",
+    value: 2215,
+  },
+  {
+    name: "Kansas",
+    value: 4987,
+  },
+  {
+    name: "Mississippi",
+    value: 7153,
+  },
+  {
+    name: "Illinois",
+    value: 23976,
+  },
+  {
+    name: "Delaware",
+    value: 1602,
+  },
+  {
+    name: "Connecticut",
+    value: 8014,
+  },
+  {
+    name: "Arkansas",
+    value: 5699,
+  },
+  {
+    name: "Indiana",
+    value: 13226,
+  },
+  {
+    name: "Missouri",
+    value: 9326,
+  },
+  {
+    name: "Florida",
+    value: 34479,
+  },
+  {
+    name: "Nevada",
+    value: 5368,
+  },
+  {
+    name: "Maine",
+    value: 767,
+  },
+  {
+    name: "Michigan",
+    value: 17996,
+  },
+  {
+    name: "Georgia",
+    value: 19784,
+  },
+  {
+    name: "Hawaii",
+    value: 474,
+  },
+  {
+    name: "Alaska",
+    value: 329,
+  },
+  {
+    name: "Tennessee",
+    value: 12081,
+  },
+  {
+    name: "Virginia",
+    value: 10625,
+  },
+  {
+    name: "New Jersey",
+    value: 25161,
+  },
+  {
+    name: "Kentucky",
+    value: 6347,
+  },
+  {
+    name: "North Dakota",
+    value: 1479,
+  },
+  {
+    name: "Minnesota",
+    value: 7094,
+  },
+  {
+    name: "Oklahoma",
+    value: 6697,
+  },
+  {
+    name: "Montana",
+    value: 1546,
+  },
+  {
+    name: "Washington State",
+    value: 5443,
+  },
+  {
+    name: "Utah",
+    value: 2166,
+  },
+  {
+    name: "Colorado",
+    value: 6344,
+  },
+  {
+    name: "Ohio",
+    value: 18991,
+  },
+  {
+    name: "Alabama",
+    value: 10790,
+  },
+  {
+    name: "Iowa",
+    value: 5886,
+  },
+  {
+    name: "New Mexico",
+    value: 4007,
+  },
+  {
+    name: "South Carolina",
+    value: 9352,
+  },
+  {
+    name: "Pennsylvania",
+    value: 25800,
+  },
+  {
+    name: "Arizona",
+    value: 17153,
+  },
+  {
+    name: "Maryland",
+    value: 8574,
+  },
+  {
+    name: "Massachusetts",
+    value: 17481,
+  },
+  {
+    name: "California",
+    value: 61038,
+  },
+  {
+    name: "Idaho",
+    value: 2202,
+  },
+  {
+    name: "Wyoming",
+    value: 703,
+  },
+  {
+    name: "North Carolina",
+    value: 12418,
+  },
+  {
+    name: "Louisiana",
+    value: 10293,
+  },
+];
 ```
 
 ### src/map.css:
@@ -830,7 +831,6 @@ const aProjection = d3Composite
 
 const geoPath = d3.geoPath().projection(aProjection);
 const geojson = topojson.feature(usajson, usajson.objects.us);
-
 ```
 
 Now let's create the map:
@@ -878,16 +878,21 @@ const calculateAffectedRadiusScale = (maxAffected: number) => {
 
 ```typescript
 const calculateRadiusBasedOnAffectedCases = (
-  comunidad: string,
+  state: string,
   dataset: ResultEntry[]
 ) => {
   const maxAffected = calculateMaxAffected(dataset);
 
   const affectedRadiusScale = calculateAffectedRadiusScale(maxAffected);
 
-  const entry = dataset.find((item) => item.name === comunidad);
+  const entry = dataset.find((item) => item.name === state);
 
-  return entry ? affectedRadiusScale(entry.value) + 5 : 0;
+  const adder = d3
+    .scaleThreshold<number, number>()
+    .domain([0, 1000, 10000, 100000, 1000000])
+    .range([1, 3, 5, 10, 20]);
+
+  return entry ? affectedRadiusScale(entry.value) + adder(maxAffected) : 0;
 };
 ```
 
@@ -970,7 +975,6 @@ document
     updateChart(deaths);
   });
 ```
-
 
 ### Add initial stats to the map by default
 

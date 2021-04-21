@@ -24,15 +24,6 @@ const svg = d3
   .attr("height", height)
   .attr("style", "background-color: #FBFAF0");
 
-svg
-  .selectAll("path")
-  .data(geojson["features"])
-  .enter()
-  .append("path")
-  .attr("class", "state")
-  // data loaded from json file
-  .attr("d", geoPath as any);
-
 const calculateMaxAffected = (dataset: ResultEntry[]) => {
   return dataset.reduce(
     (max, item) => (item.value > max ? item.value : max),
@@ -41,20 +32,25 @@ const calculateMaxAffected = (dataset: ResultEntry[]) => {
 };
 
 const calculateAffectedRadiusScale = (maxAffected: number) => {
-  return d3.scaleLinear().domain([0, maxAffected]).range([0, 40]);
+  return d3.scaleLinear().domain([0, maxAffected]).range([0, 20]);
 };
 
 const calculateRadiusBasedOnAffectedCases = (
-  comunidad: string,
+  state: string,
   dataset: ResultEntry[]
 ) => {
   const maxAffected = calculateMaxAffected(dataset);
 
   const affectedRadiusScale = calculateAffectedRadiusScale(maxAffected);
 
-  const entry = dataset.find((item) => item.name === comunidad);
+  const entry = dataset.find((item) => item.name === state);
 
-  return entry ? affectedRadiusScale(entry.value) + 5 : 0;
+  const adder = d3
+    .scaleThreshold<number, number>()
+    .domain([0, 1000, 10000, 100000, 1000000])
+    .range([1, 3, 5, 10, 20]);
+
+  return entry ? affectedRadiusScale(entry.value) + adder(maxAffected) : 0;
 };
 
 const getScaledColor = (dataset: ResultEntry[]) => {
@@ -75,8 +71,8 @@ const getScaledColor = (dataset: ResultEntry[]) => {
   return color;
 };
 
-const assignColorToCommunity = (comunidad: string, dataset: ResultEntry[]) => {
-  const entry = dataset.find((item) => item.name === comunidad);
+const assignColorToState = (state: string, dataset: ResultEntry[]) => {
+  const entry = dataset.find((item) => item.name === state);
 
   const color = getScaledColor(dataset);
 
@@ -105,7 +101,7 @@ const updateChart = (dataset: ResultEntry[]) => {
     .transition()
     .duration(800)
     .style("fill", function (d: any) {
-      return assignColorToCommunity(d.properties.name, dataset);
+      return assignColorToState(d.properties.name, dataset);
     });
 
   svg
@@ -119,6 +115,13 @@ const updateChart = (dataset: ResultEntry[]) => {
     .attr("r", (d) => calculateRadiusBasedOnAffectedCases(d.name, dataset));
 };
 
+// Define the div for the tooltip
+const div = d3
+  .select("body")
+  .append("div")
+  .attr("class", "tooltip")
+  .style("opacity", 0);
+
 svg
   .selectAll("path")
   .data(geojson["features"])
@@ -128,7 +131,7 @@ svg
   // data loaded from json file
   .attr("d", geoPath as any)
   .style("fill", function (d: any) {
-    return assignColorToCommunity(d.properties.name, cases);
+    return assignColorToState(d.properties.name, cases);
   });
 
 svg
