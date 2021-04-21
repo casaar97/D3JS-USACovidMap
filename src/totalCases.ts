@@ -144,7 +144,7 @@ export interface ResultEntry {
       value: 107202
     },
     {
-      name: "Washington State",
+      name: "Washington",
       value: 389143
     },
     {

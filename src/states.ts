@@ -167,7 +167,7 @@ export const latLongStates = [
     lat: 46.965260,
   },
   {
-    name: "Washington State",
+    name: "Washington",
     long: -120.740135,
     lat: 47.751076,
   },
