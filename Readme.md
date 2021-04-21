@@ -265,7 +265,7 @@ export const latLongStates = [
     lat: 46.96526,
   },
   {
-    name: "Washington State",
+    name: "Washington",
     long: -120.740135,
     lat: 47.751076,
   },
@@ -494,7 +494,7 @@ export const cases: ResultEntry[] = [
     value: 107202,
   },
   {
-    name: "Washington State",
+    name: "Washington",
     value: 389143,
   },
   {
@@ -706,7 +706,7 @@ export const deaths: ResultEntry[] = [
     value: 1546,
   },
   {
-    name: "Washington State",
+    name: "Washington",
     value: 5443,
   },
   {
